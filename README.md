@@ -117,14 +117,13 @@ The project deploys to Vercel with a Neon PostgreSQL database. `vercel.json` run
 
 MIT. Copyright Pedro Henrique Siqueira Fagundes.
 
-<details>
-<summary>Português</summary>
+---
 
-# Slotwise
+## Português
 
 Agendamento online para pequenos negócios, como barbearias, clínicas e personal trainers. O cliente escolhe um serviço e um horário livre, a agenda nunca marca dois clientes no mesmo horário e o dono tem um painel com os próximos atendimentos e o faturamento.
 
-## Funcionalidades
+### Funcionalidades
 
 - Conta do negócio com e-mail e senha ou login com Google (Auth.js). Cada negócio novo começa com um horário de funcionamento padrão.
 - Serviços com nome, descrição, duração e preço. Um serviço que já tem agendamentos é ocultado em vez de excluído, para manter o histórico.
@@ -139,11 +138,11 @@ Agendamento online para pequenos negócios, como barbearias, clínicas e persona
 - Português e inglês em todo o aplicativo, inclusive nas mensagens de validação.
 - Responsivo e acessível: rótulos em todos os campos, erros com `aria-invalid`, navegação por teclado, link para pular ao conteúdo, foco visível e modo escuro.
 
-## Tecnologias
+### Tecnologias
 
 Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Prisma 7, PostgreSQL, Auth.js, Stripe, Zod, Vitest, ESLint, GitHub Actions.
 
-## Notas de arquitetura
+### Notas de arquitetura
 
 1. O motor de horários (`src/lib/slots.ts`) é uma função pura. Ele não acessa o banco nem o relógio, então os casos difíceis (horário de verão, pausas, agendamentos seguidos, antecedência mínima) são cobertos por testes unitários rápidos.
 2. Dois tipos de tempo. O expediente ("abre às 09:00") é salvo em minutos desde a meia-noite local, junto com o fuso IANA. Os agendamentos são momentos reais e ficam em UTC. Um horário local que não existe, como a hora pulada no início do horário de verão, é descartado em vez de deslocado.
@@ -151,7 +150,7 @@ Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Prisma 7, Postgre
 4. Reservas aguardando pagamento expiram sozinhas (`holdExpiresAt`), sem tarefa agendada.
 5. Nenhum segredo no repositório. A configuração fica no `.env` (veja o `.env.example`), e chaves do Stripe que não são de teste são recusadas.
 
-## Como rodar
+### Como rodar
 
 Requisitos: Node.js 20.19 ou mais recente (recomendado 24).
 
@@ -171,16 +170,14 @@ Acesse http://localhost:3000. O login de demonstração é `demo@slotwise.app` c
 
 Para o login com Google e o sinal com Stripe, siga as instruções opcionais da versão em inglês. Use o cartão de teste `4242 4242 4242 4242`.
 
-## Testes
+### Testes
 
 O motor de horários e os schemas de validação têm testes unitários em `tests/`, executados com `npm test`. O GitHub Actions roda lint, verificação de tipos, testes e build de produção a cada push.
 
-## Deploy
+### Deploy
 
 O projeto é publicado na Vercel com banco PostgreSQL no Neon. O `vercel.json` roda `prisma migrate deploy` antes do build. As variáveis obrigatórias são `DATABASE_URL` e `AUTH_SECRET`. O `APP_URL` é opcional na Vercel, que usa o domínio de produção por padrão.
 
-## Licença
+### Licença
 
 MIT. Copyright Pedro Henrique Siqueira Fagundes.
-
-</details>
