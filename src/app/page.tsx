@@ -1,69 +1,109 @@
-import Image from "next/image";
+import { SiteHeader } from "@/components/site-header";
+import { Badge, ButtonLink, Card } from "@/components/ui";
+import { getI18n } from "@/i18n/server";
 
-export default function Home() {
+const icons = [
+  "M8 2v3M16 2v3M3.5 9h17M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z",
+  "M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
+  "M3 7h18v10H3zM3 11h18M7 15h3",
+  "M6 6l12 12M18 6 6 18",
+  "M4 20V10M10 20V4M16 20v-7M22 20H2",
+  "M3 5h12M9 3v2m1.5 9A18 18 0 0 1 6 7m7 11 4-9 4 9m-7-2h6",
+];
+
+export default async function Home() {
+  const { t } = await getI18n();
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <>
+      <SiteHeader />
+      <main id="main" className="flex-1">
+        <section className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:grid-cols-2 md:py-24">
+          <div>
+            <Badge tone="brand">{t.landing.badge}</Badge>
+            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{t.landing.heroTitle}</h1>
+            <p className="mt-5 max-w-xl text-lg text-muted text-pretty">{t.landing.heroSubtitle}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ButtonLink href="/signup" className="px-5 py-3 text-base">
+                {t.landing.ctaPrimary}
+              </ButtonLink>
+              <ButtonLink href="/b/studio-fade" variant="secondary" className="px-5 py-3 text-base">
+                {t.landing.ctaDemo} →
+              </ButtonLink>
+            </div>
+          </div>
+          <HeroMock />
+        </section>
+
+        <section className="border-y border-border bg-surface py-16">
+          <div className="mx-auto max-w-6xl px-4">
+            <h2 className="text-2xl font-semibold tracking-tight">{t.landing.featuresTitle}</h2>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {t.landing.features.map((f, i) => (
+                <li key={f.title}>
+                  <Card className="h-full">
+                    <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6 fill-none stroke-brand" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                      <path d={icons[i]} />
+                    </svg>
+                    <h3 className="mt-3 font-medium">{f.title}</h3>
+                    <p className="mt-1 text-sm text-muted">{f.body}</p>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight">{t.landing.howTitle}</h2>
+          <ol className="mt-8 grid gap-4 md:grid-cols-3">
+            {t.landing.how.map((step, i) => (
+              <li key={step} className="flex items-start gap-4 rounded-2xl border border-border p-5">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold text-brand-contrast">
+                  {i + 1}
+                </span>
+                <span className="pt-1">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
       </main>
+      <footer className="border-t border-border py-8 text-center text-sm text-muted">{t.landing.footer}</footer>
+    </>
+  );
+}
+
+function HeroMock() {
+  const times = ["09:00", "09:30", "10:00", "11:30", "13:00", "13:30", "14:00", "15:30", "16:00"];
+  return (
+    <div aria-hidden className="relative">
+      <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-brand-soft via-transparent to-accent/20 blur-2xl" />
+      <Card className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-muted">Studio Fade</p>
+            <p className="font-semibold">Haircut + Beard · 45 min</p>
+          </div>
+          <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand-strong">$35</span>
+        </div>
+        <div className="mt-5 grid grid-cols-7 gap-1.5 text-center text-xs">
+          {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
+            <div key={i} className={`rounded-lg py-2 ${i === 2 ? "bg-brand text-brand-contrast" : i > 5 ? "text-muted line-through" : "bg-surface-muted"}`}>
+              <div>{d}</div>
+              <div className="font-semibold">{12 + i}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {times.map((time, i) => (
+            <div
+              key={time}
+              className={`rounded-lg border py-2 text-center text-sm ${i === 4 ? "border-brand bg-brand-soft font-semibold text-brand-strong" : "border-border"}`}
+            >
+              {time}
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 }
