@@ -20,8 +20,9 @@ export type ActionState = (FormState & { ok?: boolean }) | undefined;
 
 export async function saveServiceAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { business } = await requireBusiness();
+  const { t } = await getI18n();
   const parsed = serviceSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { fields: fieldErrors(parsed.error) };
+  if (!parsed.success) return { fields: fieldErrors(parsed.error, t.errors) };
   const { name, description, durationMin, price } = parsed.data;
   const id = formData.get("id");
 
@@ -79,8 +80,9 @@ export async function saveWeeklyRulesAction(rules: unknown): Promise<ActionState
 
 export async function addBlockedDateAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const { business } = await requireBusiness();
+  const { t } = await getI18n();
   const parsed = blockedDateSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { fields: fieldErrors(parsed.error) };
+  if (!parsed.success) return { fields: fieldErrors(parsed.error, t.errors) };
   await db.blockedDate.upsert({
     where: { businessId_date: { businessId: business.id, date: parsed.data.date } },
     update: { reason: parsed.data.reason },
@@ -102,7 +104,7 @@ export async function saveSettingsAction(_prev: ActionState, formData: FormData)
   const { business } = await requireBusiness();
   const { t } = await getI18n();
   const parsed = businessSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { fields: fieldErrors(parsed.error) };
+  if (!parsed.success) return { fields: fieldErrors(parsed.error, t.errors) };
   const taken = await db.business.findFirst({ where: { slug: parsed.data.slug, NOT: { id: business.id } } });
   if (taken) return { fields: { slug: t.settings.slugTaken } };
   await db.business.update({ where: { id: business.id }, data: parsed.data });

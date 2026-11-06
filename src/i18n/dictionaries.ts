@@ -3,6 +3,16 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
 
 const en = {
+  errors: {
+    required: "This field is required.",
+    tooShort: "Must be at least {min} characters.",
+    tooLong: "Must be at most {max} characters.",
+    tooSmall: "Must be at least {min}.",
+    tooBig: "Must be at most {max}.",
+    email: "Enter a valid email address.",
+    invalid: "This value is not valid.",
+    slug: "Use lowercase letters, numbers and dashes.",
+  },
   meta: {
     title: "Slotwise — online booking for small businesses",
     description: "Let clients book your services 24/7. Real-time availability, deposits with Stripe and a clean dashboard.",
@@ -219,6 +229,16 @@ type DeepStringify<T> = T extends string
 export type Dictionary = DeepStringify<typeof en>;
 
 const pt: Dictionary = {
+  errors: {
+    required: "Campo obrigatório.",
+    tooShort: "Use pelo menos {min} caracteres.",
+    tooLong: "Use no máximo {max} caracteres.",
+    tooSmall: "O valor mínimo é {min}.",
+    tooBig: "O valor máximo é {max}.",
+    email: "Informe um e-mail válido.",
+    invalid: "Valor inválido.",
+    slug: "Use letras minúsculas, números e hífens.",
+  },
   meta: {
     title: "Slotwise — agendamento online para pequenos negócios",
     description: "Seus clientes agendam 24h por dia. Disponibilidade em tempo real, sinal via Stripe e um painel simples.",

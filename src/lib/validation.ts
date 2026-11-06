@@ -91,12 +91,45 @@ export const bookingRequestSchema = z.object({
 
 export type BookingRequest = z.infer<typeof bookingRequestSchema>;
 
+export type ErrorMessages = {
+  required: string;
+  tooShort: string;
+  tooLong: string;
+  tooSmall: string;
+  tooBig: string;
+  email: string;
+  invalid: string;
+  slug: string;
+};
+
+const fill = (template: string, vars: Record<string, unknown>) =>
+  template.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k]));
+
+/** Turns one Zod issue into a human message in the user's language. */
+export function issueMessage(issue: z.core.$ZodIssue, m: ErrorMessages): string {
+  switch (issue.code) {
+    case "too_small":
+      if (issue.origin === "string") return Number(issue.minimum) <= 1 ? m.required : fill(m.tooShort, { min: issue.minimum });
+      return fill(m.tooSmall, { min: issue.minimum });
+    case "too_big":
+      return fill(issue.origin === "string" ? m.tooLong : m.tooBig, { max: issue.maximum });
+    case "invalid_format":
+      if (issue.format === "email") return m.email;
+      if (issue.format === "regex" && issue.path.at(-1) === "slug") return m.slug;
+      return m.invalid;
+    case "invalid_type":
+      return issue.input === undefined ? m.required : m.invalid;
+    default:
+      return m.invalid;
+  }
+}
+
 /** Flattens Zod issues into `{ field: firstMessage }` for form display. */
-export function fieldErrors(error: z.ZodError): Record<string, string> {
+export function fieldErrors(error: z.ZodError, messages: ErrorMessages): Record<string, string> {
   const out: Record<string, string> = {};
   for (const issue of error.issues) {
     const key = issue.path.join(".") || "_form";
-    if (!out[key]) out[key] = issue.message;
+    if (!out[key]) out[key] = issueMessage(issue, messages);
   }
   return out;
 }

@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
-import { getDictionary, isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/dictionaries";
 import { getI18n, LOCALE_COOKIE } from "@/i18n/server";
 import { db } from "@/lib/db";
 import { fieldErrors, onboardingSchema, signInSchema, signUpSchema } from "@/lib/validation";
@@ -28,7 +28,7 @@ export async function signInAction(_prev: FormState, formData: FormData): Promis
 export async function signUpAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const { t } = await getI18n();
   const parsed = signUpSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { fields: fieldErrors(parsed.error) };
+  if (!parsed.success) return { fields: fieldErrors(parsed.error, t.errors) };
   const { name, email, password, businessName, timezone } = parsed.data;
 
   if (await db.user.findUnique({ where: { email } })) return { fields: { email: t.auth.emailTaken } };
@@ -51,8 +51,9 @@ export async function signOutAction() {
 
 export async function onboardingAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser();
+  const { t } = await getI18n();
   const parsed = onboardingSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { fields: fieldErrors(parsed.error) };
+  if (!parsed.success) return { fields: fieldErrors(parsed.error, t.errors) };
   const existing = await db.business.findUnique({ where: { ownerId: user.id } });
   if (!existing) await createBusinessFor(user.id, parsed.data.businessName, parsed.data.timezone);
   redirect("/dashboard");
@@ -61,5 +62,4 @@ export async function onboardingAction(_prev: FormState, formData: FormData): Pr
 export async function setLocaleAction(locale: string) {
   if (!isLocale(locale)) return;
   (await cookies()).set(LOCALE_COOKIE, locale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
-  return getDictionary(locale).common.language;
 }

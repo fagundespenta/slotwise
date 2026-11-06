@@ -14,7 +14,7 @@ export type BookingActionResult =
 export async function createBookingAction(input: unknown): Promise<BookingActionResult> {
   const { t, locale } = await getI18n();
   const parsed = bookingRequestSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, fields: fieldErrors(parsed.error) };
+  if (!parsed.success) return { ok: false, fields: fieldErrors(parsed.error, t.errors) };
 
   const stripe = getStripe();
   const result = await createBooking(parsed.data, { depositEnabled: stripe !== null });
