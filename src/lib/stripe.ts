@@ -19,6 +19,9 @@ export function getStripe(): Stripe | null {
   return (client = new Stripe(key));
 }
 
+/** Public base URL: APP_URL, else Vercel's production domain, else localhost. */
 export function appUrl(): string {
-  return (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  const url = process.env.APP_URL || (vercel ? `https://${vercel}` : "http://localhost:3000");
+  return url.replace(/\/$/, "");
 }
