@@ -27,7 +27,7 @@ export default async function PublicBookingPage({ params, searchParams }: PagePr
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-6">
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-semibold tracking-tight">{business.name}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-balance">{business.name}</h1>
             {business.description ? <p className="mt-1 text-sm text-muted">{business.description}</p> : null}
           </div>
           <LocaleSwitcher locale={locale} label={t.common.language} />

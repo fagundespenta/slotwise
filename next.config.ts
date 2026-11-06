@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   // Every page in Slotwise reads the session or live booking data, so we use
   // classic dynamic rendering instead of Cache Components.
   turbopack: {

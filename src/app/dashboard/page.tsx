@@ -55,7 +55,7 @@ export default async function OverviewPage() {
         ))}
       </dl>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-5">
+      <div className="mt-6 grid items-start gap-6 xl:grid-cols-5">
         <Card className="xl:col-span-3">
           <h2 className="font-semibold">{t.overview.weeklyRevenue}</h2>
           <figure className="mt-6">
