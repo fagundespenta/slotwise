@@ -4,6 +4,8 @@ Online booking for small businesses such as barbershops, clinics and personal tr
 
 ![Public booking page](docs/screenshots/booking-page.png)
 
+Live demo: https://slotwise-eta-one.vercel.app (booking page: https://slotwise-eta-one.vercel.app/b/studio-fade, owner login: `demo@slotwise.app` / `demo1234`).
+
 A Portuguese version of this document is at the end.
 
 ## Features
@@ -122,6 +124,8 @@ MIT. Copyright Pedro Henrique Siqueira Fagundes.
 ## Português
 
 Agendamento online para pequenos negócios, como barbearias, clínicas e personal trainers. O cliente escolhe um serviço e um horário livre, a agenda nunca marca dois clientes no mesmo horário e o dono tem um painel com os próximos atendimentos e o faturamento.
+
+Demonstração: https://slotwise-eta-one.vercel.app (página de agendamento: https://slotwise-eta-one.vercel.app/b/studio-fade, login do dono: `demo@slotwise.app` / `demo1234`).
 
 ### Funcionalidades
 
