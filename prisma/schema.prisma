@@ -1,0 +1,117 @@
+// Slotwise data model.
+// All instants (Booking.startsAt / endsAt) are stored in UTC.
+// Availability is stored as minutes-from-midnight in the business's own
+// IANA timezone, so "09:00-17:00" keeps meaning 09:00-17:00 across DST changes.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  image        String?
+  passwordHash String?
+  createdAt    DateTime  @default(now())
+  business     Business?
+}
+
+model Business {
+  id                String             @id @default(cuid())
+  ownerId           String             @unique
+  owner             User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name              String
+  slug              String             @unique
+  description       String?
+  timezone          String             @default("America/Sao_Paulo")
+  currency          String             @default("usd")
+  /// Percentage of the service price charged upfront via Stripe (0 = no deposit).
+  depositPercent    Int                @default(0)
+  /// Minimum minutes between "now" and the earliest bookable slot.
+  minNoticeMinutes  Int                @default(60)
+  /// How many days ahead customers can book.
+  maxAdvanceDays    Int                @default(30)
+  createdAt         DateTime           @default(now())
+  services          Service[]
+  availabilityRules AvailabilityRule[]
+  blockedDates      BlockedDate[]
+  bookings          Booking[]
+}
+
+model Service {
+  id          String    @id @default(cuid())
+  businessId  String
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  durationMin Int
+  priceCents  Int
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  bookings    Booking[]
+
+  @@index([businessId])
+}
+
+model AvailabilityRule {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  /// 0 = Sunday ... 6 = Saturday
+  weekday     Int
+  startMinute Int
+  endMinute   Int
+
+  @@index([businessId, weekday])
+}
+
+model BlockedDate {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  /// Calendar date in the business timezone, "YYYY-MM-DD".
+  date       String
+  reason     String?
+
+  @@unique([businessId, date])
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  CANCELLED
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  businessId      String
+  business        Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  serviceId       String
+  service         Service       @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  notes           String?
+  startsAt        DateTime
+  endsAt          DateTime
+  status          BookingStatus @default(CONFIRMED)
+  priceCents      Int
+  depositCents    Int           @default(0)
+  depositPaid     Boolean       @default(false)
+  stripeSessionId String?       @unique
+  /// Unguessable token used in the customer's manage/cancel link.
+  manageToken     String        @unique
+  /// Pending-payment bookings hold their slot only until this instant.
+  holdExpiresAt   DateTime?
+  cancelledAt     DateTime?
+  createdAt       DateTime      @default(now())
+
+  @@index([businessId, startsAt])
+  @@index([businessId, status])
+}
